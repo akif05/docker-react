@@ -2,6 +2,8 @@ sudo: required
 services:
   - docker
 
+install: gem install rails
+
 before_install:
   - docker build -t akif05/docker-react -f Dockerfile.dev .
 
