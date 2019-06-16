@@ -1,3 +1,4 @@
+# Use alpine image
 FROM node:alpine
 
 WORKDIR '/app'
