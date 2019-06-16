@@ -10,6 +10,86 @@ before_install:
 script:
   - docker run akif05/docker-react npm run test -- --coverage
 
+deploy:
+  provider: elastickbeanstalk
+  region: "us-west-2"
+  app: "docker-react"
+  env: "Dockder-env"
+
+
+  bucket_name: "elasticbeanstalk-us-west-2-3415243521"
+  bucket_path: "docker-react" 
+  on:
+    branch: master
+
+  access_key_id: $AWS_ACCESS_KEY
+    secure: "$AWS_SECRET_KEY"
+
+  # Create bucket_name, Travic-ci will use this name to copy
+  # filest to S3 on AWS and tell AWS to use the zip file to deploy
+  # The S3 bucket is create automaticaly when we create docker app
+  # on AWS, to get the name of the bucket:
+  # On AWS dashboard: Services, search for S3, coose S3 scalable stor in cloud
+  # select elasticbeanstalk-us-west-2-3415243521 (the one was created)
+  # this bucket is used from all docker app's
+  # name bucket_path exacly as the docker app (in our case docker-react)
+  # using 'on' to tell travic-ci to deploy if there are changes on master only
+  # Generate set of api keys on AWS to be used from travic-ci
+  # in AWS dash select Services, serch for IAM
+  # Select Users, Add user
+  # give a descriptive name like "docker-react-travic-ci"
+  # give Progrmatic access
+  # Attack existing policy, granting permissions
+  # serch for beanstack and choose "Provide full access to AWS El.."
+  # next and key's are created to be used from travic-ci to 
+  # deply the application
+  # Secret access key will be show only once
+  # Access key ID and Secret access key will be used from travic-ci
+  # These keys we will put in travic-ci -> docker-react -> more ->
+  # settings, Environment Variables
+  # For access key: AWS_ACCESS_KEY; for value: 'Access key value from AWSyyp'
+  #  access key: AWS_ACCESS_KEY; for value: 'Access key value from AWS
+  # Add Another pair as: access key: AWS_SECRET_KEY, for value: Secret access key from AWSo
+
+  # To allow access to created container on AWS we need to use EXPOSE directive
+  # in our Dockrefile
+  
+  'FROM nginx'
+  'EXPOSE 80'
+
+
+  '''
+Build Still Failing?
+If you still see a failed deployment, try the following two steps:
+
+Fix One:
+
+The npm install command frequently times out on the t2.micro instance that we are using.  An easy fix is to bump up the instance type that Elastic Beanstalk is using to a t2.small.
+
+Note that a t2.small is outside of the free tier, so you will pay a tiny bit of money (likely less than one dollar if you leave it running for a few hours) for this instance.  Don't forget to close it down!  Directions for this are a few videos ahead in the lecture titled 'Environment Cleanup'.
+
+
+
+Fix Two:
+
+Try editing the 'COPY' line of your Dockerfile like so:
+
+COPY package*.json ./
+
+Sometimes AWS has a tough time with the '.' folder designation and prefers the long form ./
+
+
+  '''
+  
+  ## on AWS site create elastickbeanstalk application
+  ## name the application docker-react
+  ## All Aplications > docker-react > Docker-env (Environment ID:
+  # e-cypgqiqu2, URL: Docker-env.qbtbvwcxmh.us-west-2-elasticbeanstalk.com)
+
+
+
+
+
 # Tell Travis we need a copy of docker running
 #sudo: required
 #services:
