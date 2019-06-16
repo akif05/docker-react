@@ -5,7 +5,7 @@ services:
 
 # Build our image using Dockerfile.dev
 before_intall:
-  - docker build -t akif05/docker-react -f Dockerfile.dev .
+  - docker build -t akif05/docker-react -f Dockerfile.dev --no-cache .
 
 # Tell Travis how to run our test suite
 # script section defines all commands to run test
